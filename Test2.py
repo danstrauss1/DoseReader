@@ -19,3 +19,6 @@ grad = np.gradient(d)
 dosethreshold = 0.5
 mindose = dosethreshold * np.max(dose.pixel_array * dose.DoseGridScaling)
 
+# Find indicies which satsify dosethreshold requirements
+index = np.argwhere(d > mindose)
+
