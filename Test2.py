@@ -9,3 +9,7 @@ ygrid = np.arange(dose.ImagePositionPatient[1], dose.Rows, dose.PixelSpacing[1])
 zgrid = np.arange(dose.ImagePositionPatient[2], dose.NumberOfFrames, int(dose.GridFrameOffsetVector[1-0]))
 grad = np.gradient(d)
 
+
+# minimum dose in Gy
+mindose = 0.5 * np.max(dose.pixel_array * dose.DoseGridScaling)
+
