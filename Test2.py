@@ -4,12 +4,18 @@ dose = pydicom.read_file('DoseVolumeTest.dcm')
 d = np.fromstring(dose.PixelData, dtype=np.int16)
 #d = d.reshape((dose.NumberOfFrames, dose.Columns, dose.Rows))
 
+
+# Build x, y, z, position grids
 xgrid = np.arange(dose.ImagePositionPatient[0], dose.Columns, dose.PixelSpacing[0])
 ygrid = np.arange(dose.ImagePositionPatient[1], dose.Rows, dose.PixelSpacing[1])
 zgrid = np.arange(dose.ImagePositionPatient[2], dose.NumberOfFrames, int(dose.GridFrameOffsetVector[1-0]))
+
+# Compute gradient matrix
 grad = np.gradient(d)
 
 
 # minimum dose in Gy
-mindose = 0.5 * np.max(dose.pixel_array * dose.DoseGridScaling)
+
+dosethreshold = 0.5
+mindose = dosethreshold * np.max(dose.pixel_array * dose.DoseGridScaling)
 
