@@ -50,3 +50,7 @@ print(dose.pixel_array[xindex[0]][yindex[0]][zindex[0]])
 
 # Gradient at point 0
 print(gradnorm[xindex[0]][yindex[0]][zindex[0]])
+
+def printpoints(numOfPoints):
+    for i in range(numOfPoints):
+        print("Point {} : ({}, {}, {}) - Dose: {} Gy".format(i+1, xindex[i], yindex[i], zindex[i], dose.DoseGridScaling * dose.pixel_array[xindex[i]][yindex[i]][zindex[i]]))
