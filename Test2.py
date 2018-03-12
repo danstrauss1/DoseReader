@@ -10,6 +10,13 @@ xgrid = np.arange(dose.ImagePositionPatient[0], dose.Columns, dose.PixelSpacing[
 ygrid = np.arange(dose.ImagePositionPatient[1], dose.Rows, dose.PixelSpacing[1])
 zgrid = np.arange(dose.ImagePositionPatient[2], dose.NumberOfFrames, int(dose.GridFrameOffsetVector[1-0]))
 
+
+# Reshape 1D arrays to 3D Cubes for both x,y,z axis
+# Determine how to index like MATLAB does
+xcube = np.stack(xgrid)
+ycube = np.stack(ygrid)
+zcube = np.stack(zgrid)
+
 # Compute gradient matrix
 grad = np.gradient(d)
 
