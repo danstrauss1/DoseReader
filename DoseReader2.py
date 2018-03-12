@@ -3,41 +3,49 @@ import pydicom
 
 class DoseCube:
 
+
     def __init__(self, dicom):
         self.dicom = dicom
 
-
+    '''
     def dosegradient(self):
-        dicom = pydicom.dcmread(self.dicom)
 
-        dosematrix = dicom.pixel_array
-        gradmatrix = np.gradient(dicom.pixel_array)
-        dosethreshold = 0.5 * np.max(dicom.pixel_array)
-        index = np.where(dicom.pixel_array >= dosethreshold)
-
-        points = dicom.pixel_array[index]
+        ds = pydicom.dcmread(self.dicom)
 
 
-        return dosematrix, gradmatrix, points
+        gradmatrix = np.gradient(ds.pixel_array)
+        dosethreshold = 0.5 * np.max(ds.pixel_array)
+        index = np.where(ds.pixel_array >= dosethreshold)
 
-    def dosethreshold(self):
-        dicom = pydicom.dcmread(self.dicom)
-        dosethreshold = 0.5 * np.max(dicom.pixel_array)
+        points = ds.pixel_array[index]
 
-        index = np.where(dicom.pixel_array >= dosethreshold)
+
+        return gradmatrix
+
+    def dosethreshold(self, mindose):
+        ds = pydicom.dcmread(self.dicom)
+        dosethreshold = mindose * np.max(ds.pixel_array)
+
+        index = np.where(ds.pixel_array >= dosethreshold)
 
         return index
-        #Find indicies which satisfy dose >= dosetheshold
+    '''
 
+    def dosegradient(self, threshold, num_of_points):
+
+        dose = pydicom.dcmread(self.dicom)
+
+        maxdose = np.max(dose.pixel_array)
+
+        Position = dose.data_element("Image Position (Patient)")
+        PixelSpacing = dose.data_element("Pixel Spacing")
 file = r"C:\Users\User\Documents\DoseVolumeTest\DoseVolumeTest.dcm"
 
 def main():
-    #gradmatix = DoseCube(file).dosegradient()
-    #dosethreshold = DoseCube(file).dosethreshold()
-    #print(gradmatix)
-    #print("Maximum Gradient is: {}.".format(np.max(gradmatix)))
-    #print("Viable indicies are {}.".format(dosethreshold))
 
-    dosematrix, gradmatix, points = DoseCube(file).dosegradient()
+
+    gradmatrix = DoseCube(file).dosegradient(0.5, 100)
     print("Viable points are {}".format(points))
+    #for point in points:
+        #print("Point : {}".format(point))
 main()
