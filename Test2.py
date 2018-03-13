@@ -64,10 +64,22 @@ sortedpoints = sorted(points, key=lambda x: x[4])
 def printpoints(numOfPoints):
 
     for i in range(numOfPoints):
-        print("({:.4}, {:.4}, {:.4}) : {:.4} cGy Gradient = {}".format(
+        print("({:.2f}, {:.2f}, {:.2f}) : {:.1f} cGy Gradient = {}".format(
             sortedpoints[i][0] / 10,
             (sortedpoints[i][1] + np.max(ygrid)) / 10,
             sortedpoints[i][2] / 10,
             sortedpoints[i][3],
             sortedpoints[i][4]
         ))
+
+def sortByDepth():
+    sortedpoints = sorted(points, key=lambda x: x[1])
+    return sortedpoints
+
+def sortByGradient():
+    sortedpoints = sorted(points, key=lambda x: x[4])
+    return sortedpoints
+
+def sortByDose():
+    sortedpoints = sorted(points, key=lambda x: x[3], reverse=True)
+    return sortedpoints
