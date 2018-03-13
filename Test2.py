@@ -11,11 +11,16 @@ ygrid = np.arange(dose.ImagePositionPatient[1], dose.Columns, dose.PixelSpacing[
 zgrid = np.arange(dose.ImagePositionPatient[2], dose.NumberOfFrames, int(dose.GridFrameOffsetVector[1-0]))
 
 
-# Reshape 1D arrays to 3D Cubes for both x,y,z axis
-# Determine how to index like MATLAB does
-xcube = np.stack((xgrid, xgrid, xgrid))
-ycube = np.stack((ygrid, ygrid, ygrid))
-zcube = np.stack((zgrid, zgrid, zgrid))
+
+planes, rows, cols = dose.NumberOfFrames, dose.Columns, dose.Rows
+image = dose.pixel_array # should have shape (planes, rows, cols)
+
+# to get data and coords to write to CSV
+image_data = image.ravel()
+z, y, x = np.meshgrid(np.arange(planes), np.arange(rows), np.arange(cols),
+                      indexing='ij')
+
+
 
 # Compute gradient matrix
 grad = np.gradient(dose.pixel_array)
@@ -48,7 +53,7 @@ points = []
 
 # Create a list of points (x, y, z, Dose, Gradient)
 for i in range(len(index[0])):
-    points.append([xindex[i], yindex[i], zindex[i],
+    points.append([xgrid[xindex[i]], ygrid[yindex[i]], zgrid[zindex[i]],
                    dose.DoseGridScaling * 100 * dose.pixel_array[xindex[i]][yindex[i]][zindex[i]],
                    gradnorm[xindex[i]][yindex[i]][zindex[i]]])
 
@@ -59,10 +64,10 @@ sortedpoints = sorted(points, key=lambda x: x[4])
 def printpoints(numOfPoints):
 
     for i in range(numOfPoints):
-        print("({}, {}, {}) : {:.4} cGy Gradient = {:.4}".format(
-            sortedpoints[i][0],
-            sortedpoints[i][1],
-            sortedpoints[i][2],
+        print("({:.4}, {:.4}, {:.4}) : {:.4} cGy Gradient = {}".format(
+            sortedpoints[i][0] / 10,
+            (sortedpoints[i][1] + np.max(ygrid)) / 10,
+            sortedpoints[i][2] / 10,
             sortedpoints[i][3],
             sortedpoints[i][4]
         ))
