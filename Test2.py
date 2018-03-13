@@ -47,14 +47,14 @@ xindex = index[0]
 yindex = index[1]
 zindex = index[2]
 
-
+'''
 mingrad = 100
 gradindex = np.nonzero(gradnorm < mingrad)
 
 xgrad = gradindex[0]
 ygrad = gradindex[1]
 zgrad = gradindex[2]
-
+'''
 
 # Dose at point 0
 
@@ -63,6 +63,21 @@ print(dose.DoseGridScaling * dose.pixel_array[xindex[0]][yindex[0]][zindex[0]])
 # Gradient at point 0
 print(gradnorm[xindex[0]][yindex[0]][zindex[0]])
 
+points = []
+
+# Create a list of points (x, y, z, Dose, Gradient)
+for i in range(len(index[0])):
+    points.append([xindex[i], yindex[i], zindex[i],
+                   dose.DoseGridScaling * 100 * dose.pixel_array[xindex[i]][yindex[i]][zindex[i]],
+                   gradnorm[xindex[i]][yindex[i]][zindex[i]]])
+
+
+# Sort points list by gradient:
+sortedpoints = sorted(points, key=lambda x: x[4])
+
 def printpoints(numOfPoints):
+    #for i in range(numOfPoints):
+        #print("Point {} : ({}, {}, {}) - Dose: {:.4} cGy".format(i+1, xindex[i], yindex[i], zindex[i], 100 * dose.DoseGridScaling * dose.pixel_array[xindex[i]][yindex[i]][zindex[i]]))
+
     for i in range(numOfPoints):
-        print("Point {} : ({}, {}, {}) - Dose: {:.4} cGy".format(i+1, xindex[i], yindex[i], zindex[i], 100 * dose.DoseGridScaling * dose.pixel_array[xindex[i]][yindex[i]][zindex[i]]))
+        print(sortedpoints[i])
