@@ -80,4 +80,11 @@ def printpoints(numOfPoints):
         #print("Point {} : ({}, {}, {}) - Dose: {:.4} cGy".format(i+1, xindex[i], yindex[i], zindex[i], 100 * dose.DoseGridScaling * dose.pixel_array[xindex[i]][yindex[i]][zindex[i]]))
 
     for i in range(numOfPoints):
-        print(sortedpoints[i])
+        #print(sortedpoints[i])
+        print("({}, {}, {}) : {:.4} cGy Gradient = {:.4}".format(
+            sortedpoints[i][0],
+            sortedpoints[i][1],
+            sortedpoints[i][2],
+            sortedpoints[i][3],
+            sortedpoints[i][4]
+        ))
