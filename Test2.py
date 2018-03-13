@@ -2,7 +2,7 @@ import pydicom, numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-dose = pydicom.read_file('DoseVolumeTest.dcm')
+dose = pydicom.read_file(r'C:\Users\User\Documents\DoseVolumeTest\DoseVolumeTest.dcm')
 #d = np.fromstring(dose.PixelData, dtype=np.int16)
 #d = d.reshape((dose.NumberOfFrames, dose.Columns, dose.Rows))
 
