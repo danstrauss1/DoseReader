@@ -1,4 +1,6 @@
 import pydicom, numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 dose = pydicom.read_file('DoseVolumeTest.dcm')
 #d = np.fromstring(dose.PixelData, dtype=np.int16)
@@ -22,15 +24,24 @@ grad = np.gradient(dose.pixel_array)
 
 gradnorm = np.sqrt(grad[0]**2 + grad[1]**2 + grad[2]**2)
 
+def printDoseGradient(level):
+    gradlevel = gradnorm[level]
+    doselevel = dose.pixel_array[level]
+
+    plt.imshow(doselevel)
+    plt.quiver(grad[0][100], grad[1][100], grad[2][100])
+
 
 # minimum dose in Gy
 
 dosethreshold = 0.5
-mindose = dosethreshold * np.max(dose.pixel_array * dose.DoseGridScaling)
+maxdose = np.max(dose.pixel_array)
+mindose = dosethreshold * maxdose
 
 # Find indicies which satsify dosethreshold requirements
 #index = np.argwhere(dose.pixel_array > mindose)
-index = np.nonzero(dose.pixel_array > mindose)
+#index = np.nonzero(dose.pixel_array > mindose)
+index = np.where(dose.pixel_array > mindose)
 
 xindex = index[0]
 yindex = index[1]
@@ -46,11 +57,12 @@ zgrad = gradindex[2]
 
 
 # Dose at point 0
-print(dose.pixel_array[xindex[0]][yindex[0]][zindex[0]])
+
+print(dose.DoseGridScaling * dose.pixel_array[xindex[0]][yindex[0]][zindex[0]])
 
 # Gradient at point 0
 print(gradnorm[xindex[0]][yindex[0]][zindex[0]])
 
 def printpoints(numOfPoints):
     for i in range(numOfPoints):
-        print("Point {} : ({}, {}, {}) - Dose: {} Gy".format(i+1, xindex[i], yindex[i], zindex[i], dose.DoseGridScaling * dose.pixel_array[xindex[i]][yindex[i]][zindex[i]]))
+        print("Point {} : ({}, {}, {}) - Dose: {:.4} cGy".format(i+1, xindex[i], yindex[i], zindex[i], 100 * dose.DoseGridScaling * dose.pixel_array[xindex[i]][yindex[i]][zindex[i]]))
