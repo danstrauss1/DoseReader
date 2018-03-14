@@ -32,7 +32,7 @@ def dosegradient(fname, numOfPoints, threshold):
     grad = np.gradient(dose.pixel_array)
 
     # Compute norm of grad matrix
-    gradnorm = np.sqrt(grad[0]**2 + grad[1]**2 + grad[2]**2)
+    gradnorm = np.sqrt(grad[0]**2. + grad[1]**2. + grad[2]**2.)
 
     '''
     def printDoseGradient(level):
@@ -115,18 +115,21 @@ def run():
 
     pointsArray = dosegradient(fname, points, threshold)
 
-    for i in table.get_children():
-        table.delete(i)
+    # Delete previous data
+    table.delete(*table.get_children())
 
-    cpt = 0
+    # Fill table with data
+    cpt = 0 #Set counter
     for row in pointsArray:
         if cpt <= points:
-            table.insert('', 'end', text=str(cpt), values=(row[0], row[1], row[2], row[3], row[4]))
+
+            table.insert('', 'end', text=str(cpt+1), values=(row[0], row[1], row[2], row[3], row[4]))
             cpt += 1
 
 
     print(fname)
     print("Completed using {} points and {}% dose threshold".format(points, threshold))
+
 
 root = Tk()
 
@@ -138,7 +141,7 @@ loadDICOM = Button(root, text="Browse for DICOM", command=load_file)
 loadDICOM.grid(row=1, column=1, padx=5, pady=5)
 
 path = StringVar()
-dcmLbl = Label(root, text=path, textvariable=path)
+dcmLbl = Label(root, textvariable=path)
 dcmLbl.grid(row=1, column=2, padx=5, pady=5)
 
 numOfPoints = Entry(root, width=8, justify=RIGHT)
@@ -160,12 +163,14 @@ runBtn.grid(row=4, column=1, padx=5, pady=5)
 table = ttk.Treeview(root)
 table.grid(row=5, column=1, columnspan=2, padx=5, pady=5)
 table["columns"] = ("x", "y", "z", "Dose", "Gradient")
+table.column('#0')
 table.column("x", width=75)
 table.column("y", width=75)
 table.column("z", width=75)
 table.column("Dose", width=75)
 table.column("Gradient", width=75)
 
+table.column("#0", width=50)
 table.heading("x", text="x(cm)")
 table.heading("y", text="y(cm)")
 table.heading("z", text="z(cm)")
