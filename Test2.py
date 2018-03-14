@@ -60,7 +60,7 @@ def dosegradient(fname, numOfPoints, threshold):
 
     # Create a list of points (x, y, z, Dose, Gradient)
     for i in range(len(index[0])):
-        points.append([xgrid[xindex[i]], ygrid[yindex[i]], zgrid[zindex[i]],
+        points.append([xgrid[xindex[i]] / 10, (ygrid[yindex[i]] + np.max(ygrid)) / 10, zgrid[zindex[i]] / 10,
                        dose.DoseGridScaling * 100 * dose.pixel_array[xindex[i]][yindex[i]][zindex[i]],
                        gradnorm[xindex[i]][yindex[i]][zindex[i]]])
 
@@ -106,11 +106,23 @@ def load_file():
 
 def run():
 
+    # Incorporate progress bar?
+    pb = ttk.Progressbar(root, orient='horizontal')
+
     fname = path.get()
     points = int(numOfPoints.get())
     threshold = int(doseThreshold.get())
 
-    dosegradient(fname, points, threshold)
+    pointsArray = dosegradient(fname, points, threshold)
+
+    for i in table.get_children():
+        table.delete(i)
+
+    cpt = 0
+    for row in pointsArray:
+        if cpt <= points:
+            table.insert('', 'end', text=str(cpt), values=(row[0], row[1], row[2], row[3], row[4]))
+            cpt += 1
 
 
     print(fname)
@@ -127,32 +139,32 @@ loadDICOM.grid(row=1, column=1, padx=5, pady=5)
 
 path = StringVar()
 dcmLbl = Label(root, text=path, textvariable=path)
-dcmLbl.grid(row=1, padx=5, pady=5)
+dcmLbl.grid(row=1, column=2, padx=5, pady=5)
 
-numOfPoints = Entry(root)
-numOfPoints.grid(row=2, padx=5, pady=5, sticky=E)
+numOfPoints = Entry(root, width=8, justify=RIGHT)
+numOfPoints.grid(row=2, column=1, padx=5, pady=5, sticky=E)
 
 pointsLbl = Label(root, text="Enter desired number of points")
-pointsLbl.grid(row=2, column=1, padx=5, pady=5, sticky=W)
+pointsLbl.grid(row=2, column=2, padx=5, pady=5, sticky=W)
 
-doseThreshold = Entry(root)
-doseThreshold.grid(row=3, padx=5, pady=5, sticky=E)
+doseThreshold = Entry(root, width=8, justify=RIGHT)
+doseThreshold.grid(row=3, column=1, padx=5, pady=5, sticky=E)
 
 thresholdLbl = Label(root, text="Enter % of Dose Max")
-thresholdLbl.grid(row=3, column=1, padx=5, pady=5, sticky=W)
+thresholdLbl.grid(row=3, column=2, padx=5, pady=5, sticky=W)
 
 runBtn = Button(root, text="Run", command=run)
 runBtn.grid(row=4, column=1, padx=5, pady=5)
 
 # Build data table
 table = ttk.Treeview(root)
-table.grid(row=5, column=1, padx=5, pady=5, sticky=E)
+table.grid(row=5, column=1, columnspan=2, padx=5, pady=5)
 table["columns"] = ("x", "y", "z", "Dose", "Gradient")
-table.column("x", width=100)
-table.column("y", width=100)
-table.column("z", width=100)
-table.column("Dose", width=100)
-table.column("Gradient", width=100)
+table.column("x", width=75)
+table.column("y", width=75)
+table.column("z", width=75)
+table.column("Dose", width=75)
+table.column("Gradient", width=75)
 
 table.heading("x", text="x(cm)")
 table.heading("y", text="y(cm)")
